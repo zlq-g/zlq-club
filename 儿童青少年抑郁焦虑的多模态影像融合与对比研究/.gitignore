@@ -1,0 +1,25 @@
+# Participant-level data and neuroimaging inputs
+*.xlsx
+*.xls
+*.csv
+*.tsv
+*.mat
+*.nii
+*.nii.gz
+
+# Generated figures and tables
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.pdf
+*.fig
+outputs/
+DEP_loading_rainclouds/
+
+# Python/MATLAB temporary files
+__pycache__/
+*.pyc
+*.asv
+*~
+.DS_Store
