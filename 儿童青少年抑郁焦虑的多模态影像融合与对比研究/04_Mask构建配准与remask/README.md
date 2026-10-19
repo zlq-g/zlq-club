@@ -42,6 +42,16 @@ export MCCAR_DATA_MAT=/path/to/ANI_mccar_all_Data.mat
 export MCCAR_REMASK_OUTPUT=/path/to/ANI_mccar_all_Data_remasked.mat
 ```
 
+仓库已附带本流程核验过的压缩 atlas 副本，可直接设置：
+
+```bash
+MODULE_DIR=/path/to/zlq-club/儿童青少年抑郁焦虑的多模态影像融合与对比研究/04_Mask构建配准与remask
+export BRAINNETOME_ATLAS="$MODULE_DIR/atlases/Brainnetome/BNA_MPM_thr25_1.25mm.nii.gz"
+export JHU_ATLAS="$MODULE_DIR/atlases/JHU/JHU-WhiteMatter-labels-1mm.nii.gz"
+```
+
+文件来源、空间信息、引用与 SHA-256 校验值见 `atlases/SOURCES_AND_LICENSES.md`。
+
 Brainnetome 应使用原始整数标签文件，例如 `BNA_MPM_thr25_1.25mm.nii.gz`。不要直接使用经过线性插值后出现大量小数标签的 `rBNA_*.nii`；代码会从原始 atlas 重新进行最近邻重采样。
 
 ### 2. 判断是“重采样”还是“真正配准”

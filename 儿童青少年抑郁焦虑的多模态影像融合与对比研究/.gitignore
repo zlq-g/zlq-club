@@ -7,6 +7,10 @@
 *.nii
 *.nii.gz
 
+# Versioned reference atlases used by the reproducible remask workflow
+!04_Mask构建配准与remask/atlases/Brainnetome/BNA_MPM_thr25_1.25mm.nii.gz
+!04_Mask构建配准与remask/atlases/JHU/JHU-WhiteMatter-labels-1mm.nii.gz
+
 # Generated figures and tables
 *.png
 *.jpg
