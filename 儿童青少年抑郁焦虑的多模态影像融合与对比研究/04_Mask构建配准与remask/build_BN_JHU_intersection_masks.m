@@ -20,6 +20,8 @@ addpath(scriptDirectory);
 %   export SPM12_DIR=/path/to/spm12
 %   export BRAIN_TEMPLATE_DIR=/path/to/Brain_templates
 %   export DTI_DIR=/path/to/Datasets/dti
+%   export BRAINNETOME_ATLAS=/path/to/BNA_MPM_thr25_1.25mm.nii.gz
+%   export JHU_ATLAS=/path/to/JHU-WhiteMatter-labels-1mm.nii.gz
 spmDirectory = getenv('SPM12_DIR');
 if ~isempty(spmDirectory) && isfolder(spmDirectory)
     addpath(spmDirectory);
@@ -28,12 +30,17 @@ assert(exist('spm_vol', 'file') == 2, 'SPM12 was not found on the path.');
 
 templateDirectory = getenv('BRAIN_TEMPLATE_DIR');
 dtiDirectory = getenv('DTI_DIR');
+brainnetomeAtlas = getenv('BRAINNETOME_ATLAS');
+jhuAtlas = getenv('JHU_ATLAS');
 assert(~isempty(templateDirectory), ...
     'Set the BRAIN_TEMPLATE_DIR environment variable.');
 assert(~isempty(dtiDirectory), 'Set the DTI_DIR environment variable.');
-
-brainnetomeAtlas = fullfile(templateDirectory, 'BN_Atlas_246_1mm.nii');
-jhuAtlas = fullfile(dtiDirectory, 'JHU-WhiteMatter-labels-1mm.nii');
+assert(~isempty(brainnetomeAtlas), ...
+    'Set the BRAINNETOME_ATLAS environment variable.');
+assert(~isempty(jhuAtlas), 'Set the JHU_ATLAS environment variable.');
+assert(isfile(brainnetomeAtlas), ...
+    'Brainnetome atlas does not exist:\n%s', brainnetomeAtlas);
+assert(isfile(jhuAtlas), 'JHU atlas does not exist:\n%s', jhuAtlas);
 
 % Replace these paths when the masks are stored elsewhere.
 oldFalffMask = fullfile(templateDirectory, 'falff_gmv_mask_raw.nii');

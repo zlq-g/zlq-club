@@ -36,9 +36,13 @@ summary = build_gmv_prevalence_mask( ...
 export SPM12_DIR=/path/to/spm12
 export BRAIN_TEMPLATE_DIR=/path/to/Brain_templates
 export DTI_DIR=/path/to/Datasets/dti
+export BRAINNETOME_ATLAS=/path/to/BNA_MPM_thr25_1.25mm.nii.gz
+export JHU_ATLAS=/path/to/JHU-WhiteMatter-labels-1mm.nii.gz
 export MCCAR_DATA_MAT=/path/to/ANI_mccar_all_Data.mat
 export MCCAR_REMASK_OUTPUT=/path/to/ANI_mccar_all_Data_remasked.mat
 ```
+
+Brainnetome 应使用原始整数标签文件，例如 `BNA_MPM_thr25_1.25mm.nii.gz`。不要直接使用经过线性插值后出现大量小数标签的 `rBNA_*.nii`；代码会从原始 atlas 重新进行最近邻重采样。
 
 ### 2. 判断是“重采样”还是“真正配准”
 

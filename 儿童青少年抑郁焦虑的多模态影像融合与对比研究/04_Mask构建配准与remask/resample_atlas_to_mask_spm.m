@@ -17,34 +17,32 @@ assert(isfile(inputAtlas), 'Atlas does not exist:\n%s', inputAtlas);
 assert(strcmpi(outputExtension, '.nii'), ...
     'outputAtlas must use an uncompressed .nii extension for SPM.');
 
-Vref = spm_vol(referenceMask);
-Vatlas = spm_vol(inputAtlas);
-assert(numel(Vref) == 1 && numel(Vatlas) == 1, ...
-    'Reference and atlas must both be single 3-D volumes.');
-
 outputDirectory = fileparts(outputAtlas);
 if ~isempty(outputDirectory) && ~isfolder(outputDirectory)
     mkdir(outputDirectory);
 end
 
+% Work with temporary uncompressed NIfTI files so .nii.gz atlas inputs are
+% supported consistently across SPM releases.
+temporaryDirectory = tempname;
+mkdir(temporaryDirectory);
+cleanupObject = onCleanup(@() safeRemoveDirectory(temporaryDirectory)); %#ok<NASGU>
+temporaryReference = fullfile(temporaryDirectory, 'reference.nii');
+temporaryAtlas = fullfile(temporaryDirectory, 'atlas.nii');
+materializeNifti(referenceMask, temporaryReference);
+materializeNifti(inputAtlas, temporaryAtlas);
+
+Vref = spm_vol(temporaryReference);
+Vatlas = spm_vol(temporaryAtlas);
+assert(numel(Vref) == 1 && numel(Vatlas) == 1, ...
+    'Reference and atlas must both be single 3-D volumes.');
+
 sameDimensions = isequal(double(Vref.dim), double(Vatlas.dim));
 sameAffine = max(abs(Vref.mat(:) - Vatlas.mat(:))) < 1e-5;
 
 if sameDimensions && sameAffine
-    atlasData = spm_read_vols(Vatlas);
-    Vout = Vatlas;
-    Vout.fname = outputAtlas;
-    spm_write_vol(Vout, atlasData);
+    copyfile(temporaryAtlas, outputAtlas);
 else
-    temporaryDirectory = tempname;
-    mkdir(temporaryDirectory);
-    cleanupObject = onCleanup(@() safeRemoveDirectory(temporaryDirectory)); %#ok<NASGU>
-
-    temporaryReference = fullfile(temporaryDirectory, 'reference.nii');
-    temporaryAtlas = fullfile(temporaryDirectory, 'atlas.nii');
-    copyfile(referenceMask, temporaryReference);
-    copyfile(inputAtlas, temporaryAtlas);
-
     flags = struct();
     flags.interp = 0;       % nearest neighbour: required for labels/masks
     flags.wrap = [0 0 0];
@@ -67,6 +65,22 @@ assert(max(abs(Vcheck.mat(:) - Vref.mat(:))) < 1e-4, ...
     'Resampled atlas affine does not match the reference mask.');
 
 fprintf('Saved nearest-neighbour atlas: %s\n', outputAtlas);
+end
+
+function materializeNifti(sourceFile, destinationFile)
+if endsWith(lower(sourceFile), '.nii.gz')
+    generatedFiles = gunzip(sourceFile, fileparts(destinationFile));
+    assert(numel(generatedFiles) == 1, ...
+        'Expected one NIfTI after decompressing %s.', sourceFile);
+    generatedFile = generatedFiles{1};
+    if ~strcmp(generatedFile, destinationFile)
+        movefile(generatedFile, destinationFile);
+    end
+elseif endsWith(lower(sourceFile), '.nii')
+    copyfile(sourceFile, destinationFile);
+else
+    error('Expected a .nii or .nii.gz file, got: %s', sourceFile);
+end
 end
 
 function safeRemoveDirectory(directoryPath)
