@@ -40,6 +40,14 @@
 
 包含 GMV 群体 mask 构建、BN/JHU atlas 最近邻重采样、不同 MNI 模板间的 ANTs 非线性配准、BN/JHU 交集 mask 生成，以及保持原变量名的 MCCAR 数据 remask。详细流程见该目录的 `README.md`。
 
+### 05_MCCAR建模与成分相关
+
+- `run_mccar_complete.m`：模态归一化、PCA 方差诊断、mCCA-R 参数扫描、loading 相关矩阵及成分重建。
+- `example_run_mccar.m`：工具箱与数据路径配置示例。
+- `LOADINGS_INTERPRETATION.md`：模态内及跨模态 loading 相关矩阵的含义。
+
+依赖原有 Fusion / mCCA 工具箱，详细输入、运行方式、输出和验证状态见该目录的 [README](05_MCCAR建模与成分相关/README.md)。
+
 ## 输入文件
 
 代码默认以脚本所在目录作为项目根目录，并按脚本注释中约定的相对路径读取输入。运行前请根据实际数据目录调整输入路径，且不要将包含被试信息的数据上传到公开仓库。
